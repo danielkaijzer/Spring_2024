@@ -1,4 +1,14 @@
 #include <iostream>
+#include <algorithm>
+#include <stdlib.h>
+
+// height-balanced definition:
+// the depth of the two subtrees of every node never differ by more than 1
+
+/*strategy:
+- Recursively check height of subtrees
+- 
+*/
 
 using namespace std;
 
@@ -14,8 +24,19 @@ struct TreeNode {
 
 class Solution {
 public:
+
+    int getHeight(TreeNode* root){
+        if (root == nullptr){
+            return 0;
+        }
+        return max(getHeight(root->left), getHeight(root->right))+1;
+    }
+
     bool isBalanced(TreeNode* root) {
-        return false;
+        if (root == nullptr){
+            return true;
+        }
+        return (abs(getHeight(root->left)-getHeight(root->right)) <= 1) && isBalanced(root->left) && isBalanced(root->right);
     }
 };
 
