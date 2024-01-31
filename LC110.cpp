@@ -29,15 +29,16 @@ public:
         if (root == nullptr){
             return 0;
         }
-        return max(getHeight(root->left), getHeight(root->right))+1;
+        return (max(getHeight(root->left),getHeight(root->right)) + 1);
     }
 
     bool isBalanced(TreeNode* root) {
         if (root == nullptr){
             return true;
         }
-        return (abs(getHeight(root->left)-getHeight(root->right)) <= 1) && isBalanced(root->left) && isBalanced(root->right);
+        return(abs(getHeight(root->left) - getHeight(root->right)) <=1) && isBalanced(root->left) && isBalanced(root->right);
     }
+
 };
 
 // Driver
