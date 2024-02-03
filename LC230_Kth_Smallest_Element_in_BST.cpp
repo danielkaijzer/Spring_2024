@@ -11,12 +11,6 @@
 - Need to backtrack (?)
 */
 
-/*
-
-Brute force. Do DFS traversal, and add all values to a sorted list of ints. Then just return kth smallest element from that list.
-
-*/
-
 using namespace std;
 
 //  Definition for a binary tree node.
@@ -32,31 +26,22 @@ struct TreeNode {
 class Solution {
 public:
 
-    void preOrderTraversal(TreeNode* root, vector<int> &v){
+    // do inOrder because of BST property. Avoids having to sort vector
+    void inOrderTraversal(TreeNode* root, vector<int> &v){
         if (root == nullptr){
             return;
         }
 
+        inOrderTraversal(root->left,v);
         v.push_back(root->val); // add value at current node to vector v
-
-        preOrderTraversal(root->left,v);
-        preOrderTraversal(root->right,v);
+        inOrderTraversal(root->right,v);
     }
 
     int kthSmallest(TreeNode* root, int k) {
         vector<int> v; // vector that stores ints
 
         // add all ints to v
-        preOrderTraversal(root,v);
-
-        // sort vector v
-        std::sort(v.begin(),v.end());
-
-        for (auto i : v){
-            cout << i << " ";
-        }
-
-        cout << endl;
+        inOrderTraversal(root,v);
 
         // return kth smallest element
         return(v[k-1]);
