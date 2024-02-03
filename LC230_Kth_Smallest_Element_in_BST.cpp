@@ -27,6 +27,7 @@ class Solution {
 public:
 
     // do inOrder because of BST property. Avoids having to sort vector
+    
     void inOrderTraversal(TreeNode* root, vector<int> &v){
         if (root == nullptr){
             return;
@@ -45,7 +46,6 @@ public:
 
         // return kth smallest element
         return(v[k-1]);
-        
     }
 };
 
