@@ -15,7 +15,6 @@ public:
         for (;r < s.size(); ++r){
             mp[s[r]]++; // iterate char in hashmap
             maxval = std::max(maxval,mp[s[r]]); // update the most common value in string (so far)
-            ans = std::max(ans,r-l+1);
 
             // check num of replacements needed
             // length of window - count of most frequent character
@@ -23,6 +22,7 @@ public:
                 mp[s[l]]--; // before we move pointer, decriment char count at left
                 l++; // move left pointer
             }
+            ans = std::max(ans,r-l+1);
         }
         return ans;
     }
