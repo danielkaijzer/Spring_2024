@@ -12,26 +12,21 @@ struct ListNode {
     ListNode(int x, ListNode *next) : val(x), next(next) {}
 };
 
+// O(2n) solution
 class Solution {
 public:
     ListNode* reverseList(ListNode* head) {
-        stack<int> s;
+        ListNode* cur = head;
+        ListNode* prev = nullptr;
 
-        ListNode *tmp = head;
-
-        while (tmp){
-            s.push(tmp->val);
-            tmp = tmp->next;
+        while(cur){
+            ListNode* tmp = cur->next;
+            cur->next = prev;
+            prev =  cur;
+            cur = tmp;
         }
 
-        tmp = head;
-        while(tmp){
-            tmp->val = s.top();
-            s.pop();
-            tmp = tmp->next;
-        }
-
-        return head;
+        return prev;
     }
 };
 
