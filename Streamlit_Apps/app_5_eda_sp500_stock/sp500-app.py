@@ -39,6 +39,9 @@ st.header('Display Companies in Selected Sector')
 st.write('Data Dimension: ' + str(df_selected_sector.shape[0]) + ' rows and ' + str(df_selected_sector.shape[1]) + ' columns.')
 st.dataframe(df_selected_sector)
 
+selected_stock = st.sidebar.selectbox('Select Stock', list(df_selected_sector.Symbol))
+
+
 # Download S&P500 data
 # https://discuss.streamlit.io/t/how-to-download-file-in-streamlit/1806
 def filedownload(df):
@@ -74,9 +77,10 @@ def price_plot(symbol):
   plt.ylabel('Closing Price', fontweight='bold')
   return st.pyplot()
 
-num_company = st.sidebar.slider('Number of Companies', 1, 5)
+#num_company = st.sidebar.slider('Number of Companies', 1, 5)
 
-if st.button('Show Plots'):
+if st.button('Show Plot'):
     st.header('Stock Closing Price')
-    for i in list(df_selected_sector.Symbol)[:num_company]:
-        price_plot(i)
+    price_plot(selected_stock)
+    # for i in list(df_selected_sector.Symbol)[:num_company]:
+    #     price_plot(i)
