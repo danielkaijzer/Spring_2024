@@ -8,7 +8,7 @@ import numpy as np
 st.title('Premier League Team Stats Explorer')
 
 st.markdown("""
-This app performs simple webscraping of NBA player stats data!
+This app performs simple webscraping of PL team stats data!
 * **Python libraries:** base64,pandas, streamlit
 * **Data source:** [fbref.com](https://fbref.com)
 """)
