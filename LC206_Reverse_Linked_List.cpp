@@ -12,10 +12,33 @@ struct ListNode {
     ListNode(int x, ListNode *next) : val(x), next(next) {}
 };
 
+// nullptr L1->L2->L3->nullptr
+
 // O(2n) solution
 class Solution {
 public:
     ListNode* reverseList(ListNode* head) {
+        ListNode * cur = head;
+        ListNode * prev = nullptr;
+
+        while(cur){
+            ListNode*tmp = cur->next;
+            cur->next = prev;
+            prev = cur;
+            cur = tmp;
+        }
+
+        return prev;
+
+    }
+};
+
+int main(){
+
+}
+
+/*
+
         ListNode* prev = nullptr;
         ListNode* cur = head;
 
@@ -27,9 +50,5 @@ public:
         }
 
         return prev;
-    }
-};
 
-int main(){
-
-}
+*/
