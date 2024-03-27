@@ -19,15 +19,15 @@ class Solution {
 public:
     ListNode* reverseList(ListNode* head) {
         ListNode* cur = head;
-        ListNode* left = nullptr;
+        ListNode* prev = nullptr;
 
         while(cur){
-            ListNode* right = cur->next;
-            cur->next = left;
-            left = cur;
-            cur = right;
+            ListNode* tmp = cur->next;
+            cur->next = prev;
+            prev = cur;
+            cur = tmp;
         }
-        return left;
+        return prev;
     }
 
     void Print(ListNode* tmp){
