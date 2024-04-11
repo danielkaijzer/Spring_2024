@@ -9,24 +9,31 @@ class Solution {
 public:
 
     int subarraySum(vector<int>& nums, int k) {
-        int count =0;
+        int count = 0;
         int current_sum = 0;
 
-        unordered_map<int,int> seen; // store seen sums and their frequencies
+        unordered_map<int,int> hmp;
 
-        for (int num : nums){
-            current_sum += num;
+        for (auto num: nums){
+            current_sum+= num;
+
             if (current_sum == k){
                 count++;
             }
 
-            // Increment count for all previous sums (current_sum - k)
-            if (seen.count(current_sum-k)){
-                count += seen[current_sum-k];
+            // check if any previous sums
+            // can be summed with current sum to get k
+            if(hmp.count(current_sum-k) > 0){
+                // if complement + current sum exists and equals k, increment count
+                // add num of occurences of previous sums
+                // we need to factor in that non-negative numbers
+                // can be in our array
+                count += hmp[current_sum-k];
+
             }
-            seen[current_sum]++;
+
+            hmp[current_sum]++; // add current sum to hashmap
         }
-        
         return count;
     }   
 
@@ -45,6 +52,32 @@ int main(){
     cout << s.subarraySum(nums2,3) << endl; // 4
 
 }
+
+/*
+     int count =0;
+        int current_sum = 0;
+
+        unordered_map<int,int> seen; // store seen sums and their frequencies
+
+        for (int num : nums){
+            current_sum += num;
+
+            // see if current sum is target
+            if (current_sum == k){
+                count++;
+            }
+
+            // else see if any previous sums can be summed with current sum to get k
+            // Increment count for all previous sums (current_sum - k)
+            if (seen.count(current_sum-k)){
+                count += seen[current_sum-k];
+            }
+            seen[current_sum]++;
+        }
+        
+        return count;
+
+*/
 
 
 
