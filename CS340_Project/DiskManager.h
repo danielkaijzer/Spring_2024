@@ -12,9 +12,15 @@ struct FileReadRequest
 
 class DiskManager{
     private:
+        unsigned int numberOfDisk_;
         std::queue<FileReadRequest> ioQueue; // I/O-Queue
 
+    public:
+        DiskManager() = default;
 
+        DiskManager(int numberOfDisks){
+            this->numberOfDisk_ = numberOfDisks;
+        }
 };
 
 #endif

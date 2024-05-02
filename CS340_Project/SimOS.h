@@ -30,12 +30,13 @@ class SimOS {
          * 
          * Disks, frame, and page enumerations all start from 0.
          * 
-         * @param numberOfDisks specifies number of hard disks in simulated computer
-         * @param amountOfRAM specifies amount of memory
-         * @param pageSize specifies page size
+         * @param numberOfDisks_ specifies number of hard disks in simulated computer
+         * @param amountOfRAM_ specifies amount of memory
+         * @param pageSize_ specifies page size
          */
         SimOS(int numberOfDisks, unsigned long long amountOfRAM, unsigned int pageSize);
 
+        
 
         /**
          * @brief creates a new process in simulated system.

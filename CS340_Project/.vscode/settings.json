@@ -3,6 +3,8 @@
         "vector": "cpp",
         "ostream": "cpp",
         "iostream": "cpp",
-        "unordered_map": "cpp"
+        "unordered_map": "cpp",
+        "bitset": "cpp",
+        "deque": "cpp"
     }
 }
