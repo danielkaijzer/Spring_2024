@@ -9,7 +9,11 @@ SimOS::SimOS(int numberOfDisks, unsigned long long amountOfRAM, unsigned int pag
 
 }
 
-void SimOS::NewProcess(){}
+void SimOS::NewProcess(){
+    std::cout << "Spawn new process" << std::endl;
+
+
+}
 
 void SimOS::SimFork(){}
 
