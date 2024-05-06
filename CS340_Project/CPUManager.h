@@ -10,6 +10,7 @@ class CPUManager{
     private:
         std::deque<int> readyQueue;
         int cpu;
+        // int PID_counter;
 
     public:
 
@@ -19,7 +20,9 @@ class CPUManager{
          * default cpu to equal 0 (meaning it is idle)
          * 
          */
-        CPUManager();
+        CPUManager(){
+            cpu = NO_PROCESS;
+        }
     
 
         /**
@@ -29,12 +32,17 @@ class CPUManager{
          * 
          * @param pid 
          */
-        void AddToReadyQueue(int pid);
+        void AddToReadyQueue(int pid){
+            if(cpu != NO_PROCESS){
+                readyQueue.push_back(pid);
+            }
+
+        }
 
         /**
          * @brief returns PID of process using CPU
          * 
-         * If CPU is idle, then return 0)
+         * If CPU is idle, then return 0
          * 
          */
         int GetProcessUsingCPU();

@@ -11,8 +11,8 @@ SimOS::SimOS(int numberOfDisks, unsigned long long amountOfRAM, unsigned int pag
 
 void SimOS::NewProcess(){
     std::cout << "Spawn new process" << std::endl;
-
-
+    PID_counter++;
+    this->cpu.AddToReadyQueue(PID_counter); // Add new process to readyQueue
 }
 
 void SimOS::SimFork(){}

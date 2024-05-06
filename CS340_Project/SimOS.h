@@ -19,6 +19,7 @@
 
 class SimOS {
     private:
+        int PID_counter;
 
         CPUManager cpu;
         DiskManager disks;
