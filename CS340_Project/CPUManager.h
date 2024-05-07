@@ -40,6 +40,22 @@ class CPUManager{
             }
         }
 
+        // similar to CPUTimerInterrupt except that we don't move process to readyQueue
+        // this is used for DiskReadRequest()
+        void RemoveProcessFromCPU(){
+            if(process_using_cpu == NO_PROCESS){
+                throw std::logic_error("CPU is idle");
+            }
+            // if readyQueue is empty, then CPU will be idle
+            if (readyQueue.empty()){
+                process_using_cpu = NO_PROCESS;
+            }
+            else{ // else CPU will now run process at front of readyQueue
+                process_using_cpu = readyQueue.front();
+                readyQueue.pop_front();
+            }
+        }
+
         /**
          * @brief Implements timer interrupt from OS
          * Removes current process using cpu
@@ -47,14 +63,12 @@ class CPUManager{
          * Move process at front of readyQueue to CPU 
          */
         void CPUTimerInterrupt(){
-            if(process_using_cpu == NO_PROCESS){
-                throw std::logic_error("CPU is idle");
-            }
-            
-            // remove current process using CPU from  CPU and return to ready queue
-            readyQueue.push_back(process_using_cpu);
-            process_using_cpu = readyQueue.front();
-            readyQueue.pop_front();
+            int process_to_interrupt = process_using_cpu;
+
+            RemoveProcessFromCPU();
+
+            // add interrupted process to readyQueue
+            readyQueue.push_back(process_to_interrupt);
         }
 
         /**

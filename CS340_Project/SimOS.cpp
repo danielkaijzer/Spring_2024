@@ -37,7 +37,14 @@ void SimOS::TimerInterrupt(){
     this->cpu.CPUTimerInterrupt();
 }
 
-void SimOS::DiskReadRequest( int diskNumber, std::string fileName ){}
+void SimOS::DiskReadRequest( int diskNumber, std::string fileName ){
+    // current process using CPU requests to read file from Disk diskNumber
+    this->disks.ReadFromDisk(this->cpu.GetProcessUsingCPU(),diskNumber,fileName);
+
+    // remove current process from CPU, 
+    this->cpu.RemoveProcessFromCPU();
+
+}
 
 void SimOS::DiskJobCompleted( int diskNumber ){}
 
