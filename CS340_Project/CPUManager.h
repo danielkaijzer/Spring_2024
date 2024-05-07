@@ -9,8 +9,7 @@ constexpr int NO_PROCESS{ 0 };
 class CPUManager{
     private:
         std::deque<int> readyQueue;
-        int cpu;
-        // int PID_counter;
+        int process_using_cpu = NO_PROCESS;
 
     public:
 
@@ -21,7 +20,7 @@ class CPUManager{
          * 
          */
         CPUManager(){
-            cpu = NO_PROCESS;
+            process_using_cpu = NO_PROCESS;
         }
     
 
@@ -33,10 +32,29 @@ class CPUManager{
          * @param pid 
          */
         void AddToReadyQueue(int pid){
-            if(cpu != NO_PROCESS){
+            if(process_using_cpu != NO_PROCESS){
                 readyQueue.push_back(pid);
             }
+            else{ // if CPU is idle
+                process_using_cpu = pid;
+            }
+        }
 
+        /**
+         * @brief Implements timer interrupt from OS
+         * Removes current process using cpu
+         * Place that process in the back of readyQueue
+         * Move process at front of readyQueue to CPU 
+         */
+        void CPUTimerInterrupt(){
+            if(process_using_cpu == NO_PROCESS){
+                throw std::logic_error("CPU is idle");
+            }
+            
+            // remove current process using CPU from  CPU and return to ready queue
+            readyQueue.push_back(process_using_cpu);
+            process_using_cpu = readyQueue.front();
+            readyQueue.pop_front();
         }
 
         /**
@@ -45,9 +63,13 @@ class CPUManager{
          * If CPU is idle, then return 0
          * 
          */
-        int GetProcessUsingCPU();
+        int GetProcessUsingCPU(){
+            return process_using_cpu;
+        }
 
-        std::deque<int> GetReadyQueueFromCPUManager();
+        std::deque<int> GetReadyQueueFromCPUManager(){
+            return readyQueue;
+        }
 };
 
 #endif

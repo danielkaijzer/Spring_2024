@@ -10,18 +10,32 @@ SimOS::SimOS(int numberOfDisks, unsigned long long amountOfRAM, unsigned int pag
 }
 
 void SimOS::NewProcess(){
-    std::cout << "Spawn new process" << std::endl;
     PID_counter++;
     this->cpu.AddToReadyQueue(PID_counter); // Add new process to readyQueue
 }
 
-void SimOS::SimFork(){}
+void SimOS::SimFork(){
+    if(!this->cpu.GetProcessUsingCPU()){ // if CPU is idle throw error
+        throw std::logic_error("CPU is idle");
+    }
+    int childPID = ++PID_counter;
+    this->cpu.AddToReadyQueue(childPID);
+}
 
-void SimOS::SimExit(){}
+void SimOS::SimExit(){
+    if(!this->cpu.GetProcessUsingCPU()){ // if CPU is idle throw error
+        throw std::logic_error("CPU is idle");
+    }
 
-void SimOS::SimWait(){}
+}
 
-void SimOS::TimerInterrupt(){}
+void SimOS::SimWait(){
+    // TBD
+}
+
+void SimOS::TimerInterrupt(){
+    this->cpu.CPUTimerInterrupt();
+}
 
 void SimOS::DiskReadRequest( int diskNumber, std::string fileName ){}
 
@@ -29,9 +43,13 @@ void SimOS::DiskJobCompleted( int diskNumber ){}
 
 void SimOS::AccessMemoryAddress(unsigned long long address){}
 
-int SimOS::GetCPU(){}
+int SimOS::GetCPU(){
+    return this->cpu.GetProcessUsingCPU();
+}
 
-std::deque<int> SimOS::GetReadyQueue(){}
+std::deque<int> SimOS::GetReadyQueue(){
+    return this->cpu.GetReadyQueueFromCPUManager();
+}
 
 MemoryUsage SimOS::GetMemory(){}
 
