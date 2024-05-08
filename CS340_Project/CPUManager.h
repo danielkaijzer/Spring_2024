@@ -2,7 +2,7 @@
 #define _CPUMANAGER_H
 
 #include <iosfwd> // SimOS will include <iostream>
-#include <deque> // include STL double ended queue data structure for ready-queue implementation
+//#include <deque> // include STL double ended queue data structure for ready-queue implementation
 
 constexpr int NO_PROCESS{ 0 };
 
@@ -41,11 +41,10 @@ class CPUManager{
         }
 
         // similar to CPUTimerInterrupt except that we don't move process to readyQueue
-        // this is used for DiskReadRequest()
-        void RemoveProcessFromCPU(){
-            if(process_using_cpu == NO_PROCESS){
-                throw std::logic_error("CPU is idle");
-            }
+        // this is used for DiskReadRequest() and termination
+        void RemoveCurrentProcessFromCPU(){
+            CPU_Idle_ErrorCheck(); // check if CPU idle
+
             // if readyQueue is empty, then CPU will be idle
             if (readyQueue.empty()){
                 process_using_cpu = NO_PROCESS;
@@ -63,9 +62,11 @@ class CPUManager{
          * Move process at front of readyQueue to CPU 
          */
         void CPUTimerInterrupt(){
+            CPU_Idle_ErrorCheck(); // check if CPU idle
+
             int process_to_interrupt = process_using_cpu;
 
-            RemoveProcessFromCPU();
+            RemoveCurrentProcessFromCPU();
 
             // add interrupted process to readyQueue
             readyQueue.push_back(process_to_interrupt);
@@ -83,6 +84,36 @@ class CPUManager{
 
         std::deque<int> GetReadyQueueFromCPUManager(){
             return readyQueue;
+        }
+
+        void removeProcessFromReadyQueue(int pid){
+            if(readyQueue.empty()){ // first check if readyQueue is empty
+                return; // if readyQueue empty there's no need to look
+            }
+
+            // search readyQueue for process to be terminated
+            for (auto itr = readyQueue.begin(); itr != readyQueue.end();){
+                if (*itr == pid){ // if process found in readyQueue
+                    itr = readyQueue.erase(itr); // returns next iterator
+                    return; // no need to keep looking
+                }
+                else{
+                    ++itr;
+                }
+            }
+        }
+
+
+        /**
+         * @brief Check if CPU is idle, if it is throw exception
+         * 
+         * @return true 
+         * @return false 
+         */
+        bool CPU_Idle_ErrorCheck(){
+            if(process_using_cpu == NO_PROCESS){
+                throw std::logic_error("CPU is idle");
+            }
         }
 };
 

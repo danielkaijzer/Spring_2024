@@ -11,26 +11,25 @@ SimOS::SimOS(int numberOfDisks, unsigned long long amountOfRAM, unsigned int pag
 
 void SimOS::NewProcess(){
     PID_counter++;
-    this->cpu.AddToReadyQueue(PID_counter); // Add new process to readyQueue
+    processes[PID_counter] = Process(PID_counter);
+
+    this->cpu.AddToReadyQueue(PID_counter); // Add new process to readyQueue or CPU if idle
+    
 }
 
 void SimOS::SimFork(){
-    if(!this->cpu.GetProcessUsingCPU()){ // if CPU is idle throw error
-        throw std::logic_error("CPU is idle");
-    }
-    int childPID = ++PID_counter;
+    this->cpu.CPU_Idle_ErrorCheck(); // if CPU idle throw error
+
+    // create child
+    PID_counter++;
+    int childPID = PID_counter;
+    processes[PID_counter] = Process(childPID);
+
+    // parent tracks new child
+    processes[this->cpu.GetProcessUsingCPU()].children.push_back(childPID);
+
+    // add child to readyQueue
     this->cpu.AddToReadyQueue(childPID);
-}
-
-void SimOS::SimExit(){
-    if(!this->cpu.GetProcessUsingCPU()){ // if CPU is idle throw error
-        throw std::logic_error("CPU is idle");
-    }
-
-}
-
-void SimOS::SimWait(){
-    // TBD
 }
 
 void SimOS::TimerInterrupt(){
@@ -38,17 +37,31 @@ void SimOS::TimerInterrupt(){
 }
 
 void SimOS::DiskReadRequest( int diskNumber, std::string fileName ){
+
     // current process using CPU requests to read file from Disk diskNumber
     this->disks.ReadFromDisk(this->cpu.GetProcessUsingCPU(),diskNumber,fileName);
 
+    // track the disk the process will be using
+    processes[this->cpu.GetProcessUsingCPU()].disk = diskNumber;
+    
     // remove current process from CPU, 
-    this->cpu.RemoveProcessFromCPU();
+    this->cpu.RemoveCurrentProcessFromCPU();
 
 }
 
-void SimOS::DiskJobCompleted( int diskNumber ){}
+void SimOS::DiskJobCompleted( int diskNumber ){
+    int servedProcessPID = this->GetDisk(diskNumber).PID;
 
-void SimOS::AccessMemoryAddress(unsigned long long address){}
+    // "Complete" job by dequeing from front of IO queue
+    disks.dequeFrontIOQueue(diskNumber);
+
+    // update disk tracking for process that has been served
+    processes[servedProcessPID].disk = -1; // process no longer using disk
+
+    // move served process back to readyQueue
+    this->cpu.AddToReadyQueue(servedProcessPID);
+
+}
 
 int SimOS::GetCPU(){
     return this->cpu.GetProcessUsingCPU();
@@ -58,9 +71,59 @@ std::deque<int> SimOS::GetReadyQueue(){
     return this->cpu.GetReadyQueueFromCPUManager();
 }
 
-MemoryUsage SimOS::GetMemory(){}
+MemoryUsage SimOS::GetMemory(){
+    this->ram.GetMemory();
+}
 
-FileReadRequest SimOS::GetDisk(int diskNumber){}
+FileReadRequest SimOS::GetDisk(int diskNumber){
+    return this->disks.GetDisk(diskNumber);
+}
 
-std::deque<FileReadRequest> SimOS::GetDiskQueue( int diskNumber ){}
+std::deque<FileReadRequest> SimOS::GetDiskQueue( int diskNumber ){
+    return disks.GetDiskQueue(diskNumber);
+}
+
+
+
+// -------------- TO DO ---------------
+
+
+void SimOS::SimExit(){
+    this->cpu.CPU_Idle_ErrorCheck(); // if CPU idle throw error
+
+    // terminate process, terminates it's children (and release from memory)
+    terminateProcess(this->cpu.GetProcessUsingCPU());
+    this->cpu.RemoveCurrentProcessFromCPU();
+
+}
       
+void SimOS::terminateProcess(int pid){
+    std::vector<unsigned int> children = processes[pid].children;
+
+    // terminate children
+    for (int childPID : children){ // recursively
+        terminateProcess(childPID);
+    }
+
+    // Remove process from memory
+    this->ram.removeProcessFromMemory(pid); // TO DO
+
+    // Remove processes from readyQueue
+    this->cpu.removeProcessFromReadyQueue(pid);
+
+    // Remove process from diskQueue
+    this->disks.removeProcessFromIOQueues(pid, processes[pid].disk);
+    
+    // remove process from map of processes
+    processes.erase(pid);
+}
+
+// TO DO
+void SimOS::SimWait(){
+    // TO DO
+}
+
+void SimOS::AccessMemoryAddress(unsigned long long address){
+    //TO DO
+    ram.AccessMemoryAddress(address,this->cpu.GetProcessUsingCPU());
+}

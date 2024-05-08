@@ -24,6 +24,8 @@ class MemoryManager{
         unsigned int pageSize_;
         unsigned long long totalFrames_;
 
+        MemoryUsage memory;
+
     public:
         MemoryManager() = default;
 
@@ -31,6 +33,38 @@ class MemoryManager{
             this->pageSize_ = pageSize;
             this->totalFrames_ = amountOfRAM/pageSize;
         }
+
+        // void AccessMemoryAddressMM(unsigned long long address){}
+
+        // MemoryUsage GetMemoryMM(){};
+        
+        MemoryUsage GetMemory(){
+            return memory;
+        }
+
+
+       /**
+        * @brief Remove process from RAM (frames and pages)
+        * 
+        * @param pid 
+        */
+        void removeProcessFromMemory(int pid){
+
+            // iterate through memory (vector of MemoryItems) 
+            // to remove frames and pages with specified process
+        }
+
+
+        /*
+        Currently running process wants to access the specified logical memory address. 
+        System makes sure the corresponding page is loaded in the RAM. 
+        If the corresponding page is already in the RAM, 
+        its “recently used” information is updated.
+        */
+        void AccessMemoryAddress(unsigned long long address, int process_using_cpu){
+
+        }
+
 };
 
 #endif

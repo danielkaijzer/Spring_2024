@@ -13,17 +13,40 @@
 #define _SIMOS_H
 
 #include <iostream>
+#include <vector>
+#include <deque>
+#include <unordered_map>
 #include "CPUManager.h"
 #include "DiskManager.h"
 #include "MemoryManager.h"
 
+// essentially acts as a Process Control Block
+struct Process{
+    unsigned int pid_{0};
+    std::vector<unsigned int> children;
+    int disk{-1}; // initialize disk to -1 since process isn't using a disk 
+
+
+    // parameterized constructor
+    Process(unsigned int pid) : pid_(pid) {}
+};
+
 class SimOS {
     private:
-        int PID_counter;
+        int PID_counter{0};
 
         CPUManager cpu;
         DiskManager disks;
         MemoryManager ram;
+
+        std::unordered_map<int, Process> processes;
+        
+        /**
+         * @brief Terminates process
+         * implements cascading termination
+         * @param pid 
+         */
+        void terminateProcess(int pid);
 
     public:
         /**
