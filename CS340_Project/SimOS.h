@@ -15,6 +15,7 @@
 #include <iostream>
 #include <vector>
 #include <deque>
+#include <algorithm>
 #include <unordered_map>
 #include "CPUManager.h"
 #include "DiskManager.h"
@@ -46,7 +47,7 @@ class SimOS {
          * implements cascading termination
          * @param pid 
          */
-        void terminateProcess(int pid);
+        void TerminateProcess(int pid);
 
     public:
         /**

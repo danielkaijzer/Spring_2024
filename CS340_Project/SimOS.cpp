@@ -63,6 +63,14 @@ void SimOS::DiskJobCompleted( int diskNumber ){
 
 }
 
+void SimOS::AccessMemoryAddress(unsigned long long address){
+    // check if CPU idle
+    cpu.CPU_Idle_ErrorCheck();
+    
+    // MemoryManager will handle the memory address access operation
+    ram.AccessMemoryAddress(address,this->cpu.GetProcessUsingCPU());
+}
+
 int SimOS::GetCPU(){
     return this->cpu.GetProcessUsingCPU();
 }
@@ -84,46 +92,52 @@ std::deque<FileReadRequest> SimOS::GetDiskQueue( int diskNumber ){
 }
 
 
-
-// -------------- TO DO ---------------
-
-
 void SimOS::SimExit(){
     this->cpu.CPU_Idle_ErrorCheck(); // if CPU idle throw error
 
     // terminate process, terminates it's children (and release from memory)
-    terminateProcess(this->cpu.GetProcessUsingCPU());
+    TerminateProcess(this->cpu.GetProcessUsingCPU());
     this->cpu.RemoveCurrentProcessFromCPU();
 
 }
       
-void SimOS::terminateProcess(int pid){
+void SimOS::TerminateProcess(int pid){
     std::vector<unsigned int> children = processes[pid].children;
 
     // terminate children
     for (int childPID : children){ // recursively
-        terminateProcess(childPID);
+        TerminateProcess(childPID);
     }
 
     // Remove process from memory
-    this->ram.removeProcessFromMemory(pid); // TO DO
+    this->ram.RemoveProcessFromMemory(pid);
 
     // Remove processes from readyQueue
-    this->cpu.removeProcessFromReadyQueue(pid);
+    this->cpu.RemoveProcessFromReadyQueue(pid);
 
     // Remove process from diskQueue
-    this->disks.removeProcessFromIOQueues(pid, processes[pid].disk);
+    this->disks.RemoveProcessFromIOQueues(pid, processes[pid].disk);
     
     // remove process from map of processes
     processes.erase(pid);
 }
 
-// TO DO
+// -------------- TO DO ---------------
+
 void SimOS::SimWait(){
     // TO DO
-}
 
-void SimOS::AccessMemoryAddress(unsigned long long address){
-    //TO DO
-    ram.AccessMemoryAddress(address,this->cpu.GetProcessUsingCPU());
+    cpu.CPU_Idle_ErrorCheck(); // check if CPU idle, throw error if so
+
+    // check for zombie children
+    // terminate zombies
+
+    // if there's no zombie children,
+    // process pauses and waits
+    // activate next process in readyQueue
+
+    // if zombie child exists,
+    // continue execution (process keeps using CPU)
+
+
 }

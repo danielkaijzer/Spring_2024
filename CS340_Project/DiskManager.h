@@ -32,7 +32,7 @@ class DiskManager{
         }
 
         void ReadFromDisk( int current_process_PID, int diskNumber, std::string fileName){
-            ifDiskExists(diskNumber);
+            IfDiskExists(diskNumber);
 
             // add process to I/O queue
             FileReadRequest f; 
@@ -48,8 +48,8 @@ class DiskManager{
          * @param pid 
          * @param diskNumber 
          */
-        void removeProcessFromIOQueues(int pid, int diskNumber){
-            ifDiskExists(diskNumber);
+        void RemoveProcessFromIOQueues(int pid, int diskNumber){
+            IfDiskExists(diskNumber);
 
             if (diskNumber == -1){
                 return; // if invalid disk number, you don't need to look
@@ -75,7 +75,7 @@ class DiskManager{
          * @return FileReadRequest object
          */
         FileReadRequest GetDisk(int diskNumber){
-            ifDiskExists(diskNumber);
+            IfDiskExists(diskNumber);
 
             // if ioQueue isn't empty for disk, return process currently using disk (i.e., at front of queue)
             if(!ioQueues[diskNumber].empty()){
@@ -97,7 +97,7 @@ class DiskManager{
          * @return true 
          * @return false 
          */
-        bool ifDiskExists(int diskNumber){
+        bool IfDiskExists(int diskNumber){
             if (diskNumber > numberOfDisks_){
                 throw std::out_of_range("Specified disk doesn't exist");
             }

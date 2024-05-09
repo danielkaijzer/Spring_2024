@@ -86,7 +86,7 @@ class CPUManager{
             return readyQueue;
         }
 
-        void removeProcessFromReadyQueue(int pid){
+        void RemoveProcessFromReadyQueue(int pid){
             if(readyQueue.empty()){ // first check if readyQueue is empty
                 return; // if readyQueue empty there's no need to look
             }
