@@ -27,6 +27,10 @@ struct Process{
     std::vector<unsigned int> children;
     int disk{-1}; // initialize disk to -1 since process isn't using a disk 
 
+    int parent_pid{0};
+
+    bool waiting{false}; // process is waiting to collect exit status of child
+    bool zombie{false}; // parent hasn't called wait yet
 
     // parameterized constructor
     Process(unsigned int pid) : pid_(pid) {}
@@ -40,14 +44,36 @@ class SimOS {
         DiskManager disks;
         MemoryManager ram;
 
-        std::unordered_map<int, Process> processes;
+        std::unordered_map<int, Process> processes; // acts like a process table
         
+        /**
+         * @brief Returns PID of parent of process given by pid
+         * 
+         * @param pid of process you want to find parent for
+         * @return pid of parent
+         */
+        int GetParentPID(int pid);
+
         /**
          * @brief Terminates process
          * implements cascading termination
          * @param pid 
          */
         void TerminateProcess(int pid);
+
+        /**
+         * @brief kills children
+         * 
+         * @param pid 
+         */
+        void TerminateChildren(int pid);
+
+        /**
+         * @brief Turns process into zombie
+         * i.e., all resources are removed but process remains in process table
+         * only if parent process hasn't called wait() yet
+         */
+        void MakeZombie(Process& p);
 
     public:
         /**

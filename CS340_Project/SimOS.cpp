@@ -24,6 +24,7 @@ void SimOS::SimFork(){
     PID_counter++;
     int childPID = PID_counter;
     processes[PID_counter] = Process(childPID);
+    processes[PID_counter].parent_pid = this->cpu.GetProcessUsingCPU(); // store parent PID in child PCB
 
     // parent tracks new child
     processes[this->cpu.GetProcessUsingCPU()].children.push_back(childPID);
@@ -95,49 +96,102 @@ std::deque<FileReadRequest> SimOS::GetDiskQueue( int diskNumber ){
 void SimOS::SimExit(){
     this->cpu.CPU_Idle_ErrorCheck(); // if CPU idle throw error
 
-    // terminate process, terminates it's children (and release from memory)
-    TerminateProcess(this->cpu.GetProcessUsingCPU());
-    this->cpu.RemoveCurrentProcessFromCPU();
+    int process_to_exit_PID = this->cpu.GetProcessUsingCPU();
+    bool parent_waiting = processes.at(GetParentPID(process_to_exit_PID)).waiting;
 
-}
-      
-void SimOS::TerminateProcess(int pid){
-    std::vector<unsigned int> children = processes[pid].children;
 
-    // terminate children
-    for (int childPID : children){ // recursively
-        TerminateProcess(childPID);
+    // Check if parent of current process has called wait()
+    if (parent_waiting){
+        // terminate process immediately
+        TerminateProcess(this->cpu.GetProcessUsingCPU());
+        this->cpu.RemoveCurrentProcessFromCPU();
+        // change parent waiting state to false
+        processes.at(GetParentPID(process_to_exit_PID)).waiting = false;
     }
-
-    // Remove process from memory
-    this->ram.RemoveProcessFromMemory(pid);
-
-    // Remove processes from readyQueue
-    this->cpu.RemoveProcessFromReadyQueue(pid);
-
-    // Remove process from diskQueue
-    this->disks.RemoveProcessFromIOQueues(pid, processes[pid].disk);
-    
-    // remove process from map of processes
-    processes.erase(pid);
+    else{ // else if parent isn't waiting
+        MakeZombie(processes.at(process_to_exit_PID)); // turn process into zombie
+    }
 }
 
-// -------------- TO DO ---------------
-
+// TO DO
 void SimOS::SimWait(){
-    // TO DO
 
     cpu.CPU_Idle_ErrorCheck(); // check if CPU idle, throw error if so
 
-    // check for zombie children
-    // terminate zombies
+    // loop through children and check if any of them are zombies
+
+    // get PID of process using CPU
+    int pid_of_current_process = cpu.GetProcessUsingCPU();
+
+    // if process has no children throw exception (it would wait forever)
+    if (processes[pid_of_current_process].children.empty()){
+        std::logic_error("Process has no children to wait for");
+    }
+    else{ // process has children
+
+        // check if any of the children are zombies
+
+    }
 
     // if there's no zombie children,
-    // process pauses and waits
-    // activate next process in readyQueue
+        // process pauses and waits
+        // activate next process in readyQueue
 
     // if zombie child exists,
-    // continue execution (process keeps using CPU)
+        // remove one
+        // continue execution (process keeps using CPU)
 
 
+}
+
+int SimOS::GetParentPID(int pid){
+
+    return processes.at(pid).parent_pid;
+}
+       
+void SimOS::TerminateProcess(int pid){
+
+        // check if process has children
+    if (!processes[pid].children.empty()){
+        // terminate children recursively
+        for (int childPID : processes[pid].children){
+            TerminateProcess(childPID);
+        }
+    }
+
+    // Remove this process from memory
+    this->ram.RemoveProcessFromMemory(pid);
+
+    // Remove this process from readyQueue
+    this->cpu.RemoveProcessFromReadyQueue(pid);
+
+    // Remove this process from diskQueue
+    this->disks.RemoveProcessFromIOQueues(pid, processes[pid].disk);
+
+    // remove pthis rocess from vector of processes
+    processes.erase(pid);
+}
+
+void SimOS::TerminateChildren(int pid){
+    // loop through children and call TerminateProcess on each
+    for (auto child : processes.at(pid).children){
+        TerminateProcess(child);
+    }
+}
+
+void SimOS::MakeZombie(Process& p){
+    // terminate all children of this process
+    TerminateChildren(p.pid_);
+
+    // Remove this process from memory
+    this->ram.RemoveProcessFromMemory(p.pid_);
+
+    // Remove this process from readyQueue
+    this->cpu.RemoveProcessFromReadyQueue(p.pid_);
+
+    // Remove this process from diskQueue
+    this->disks.RemoveProcessFromIOQueues(p.pid_, processes[p.pid_].disk);
+
+    // keep process in process table but mark as a zombie
+    p.zombie == true;
 }

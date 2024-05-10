@@ -42,28 +42,6 @@ class MemoryManager{
             return memory;
         }
 
-
-       /**
-        * @brief Remove process from RAM (frames and pages)
-        * 
-        * @param pid 
-        */
-        void RemoveProcessFromMemory(int pid){
-            // Remove all frames associated with the process PID
-            for (auto itr = memory.begin(); itr != memory.end();) {
-                if (itr->PID == pid) {
-                    // Erase and get the new iterator pointing to the next element
-                    itr = memory.erase(itr);
-                } 
-                else
-                {
-                    // Only increment the iterator if no erasure happens
-                    ++itr;
-                }
-            }
-        }
-
-
         /*
         Currently running process wants to access the specified logical memory address. 
         System makes sure the corresponding page is loaded in the RAM. 
@@ -93,7 +71,7 @@ class MemoryManager{
 
         }
 
-        // TEMP
+
         void UpdateRecentlyUsed(MemoryItem& frame) {
             // Find frame in memory (vector of all memory items)
             auto it = std::find_if(memory.begin(), memory.end(), [&](const MemoryItem& item) {
@@ -107,7 +85,7 @@ class MemoryManager{
             }
         }
 
-        // TEMP
+
         // Page fault: A situation where process wants to use a page that is not currently in RAM
         // So page must be loaded from HD into RAM
         void HandlePageFault(unsigned long long pageNumber, int pid) {
@@ -129,6 +107,28 @@ class MemoryManager{
             {
                 MemoryItem newFrame {pageNumber, static_cast<unsigned long long>(memory.size()), pid};
                 memory.insert(memory.begin(), newFrame); // Insert new frame at the front of memory to mark as recently used
+            }
+        }
+
+
+
+       /**
+        * @brief Remove process from RAM (frames and pages)
+        * 
+        * @param pid 
+        */
+        void RemoveProcessFromMemory(int pid){
+            // Remove all frames associated with the process PID
+            for (auto itr = memory.begin(); itr != memory.end();) {
+                if (itr->PID == pid) {
+                    // Erase and get the new iterator pointing to the next element
+                    itr = memory.erase(itr);
+                } 
+                else
+                {
+                    // Only increment the iterator if no erasure happens
+                    ++itr;
+                }
             }
         }
 
