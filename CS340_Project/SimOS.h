@@ -72,6 +72,7 @@ class SimOS {
          * @brief Turns process into zombie
          * i.e., all resources are removed but process remains in process table
          * only if parent process hasn't called wait() yet
+         * almost identical to TerminateProcess except that we keep process in process table and mark it as a zombie
          */
         void MakeZombie(Process& p);
 

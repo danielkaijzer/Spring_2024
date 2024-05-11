@@ -104,13 +104,17 @@ void SimOS::SimExit(){
     if (parent_waiting){
         // terminate process immediately
         TerminateProcess(this->cpu.GetProcessUsingCPU());
-        this->cpu.RemoveCurrentProcessFromCPU();
         // change parent waiting state to false
         processes.at(GetParentPID(process_to_exit_PID)).waiting = false;
     }
     else{ // else if parent isn't waiting
         MakeZombie(processes.at(process_to_exit_PID)); // turn process into zombie
+        // remove from cpu
     }
+
+    // remove this process from CPU and don't put it in readyQueue
+    // at this point if it's a zombie only it's PCB is left
+    this->cpu.RemoveCurrentProcessFromCPU();
 }
 
 // TO DO
@@ -130,18 +134,23 @@ void SimOS::SimWait(){
     else{ // process has children
 
         // check if any of the children are zombies
-
-    }
-
-    // if there's no zombie children,
+        for (auto childPID : processes[pid_of_current_process].children){
+            // if zombie exists
+            if (processes[childPID].zombie){ // if child is a zombie
+                // terminate zombie child (i.e., collect exit status)
+                TerminateProcess(childPID);
+                // continue execution (process keeps using CPU)
+                return; 
+            }
+        }
+        // if no zombies were found in loop
         // process pauses and waits
+        processes[pid_of_current_process].waiting = true;
         // activate next process in readyQueue
-
-    // if zombie child exists,
-        // remove one
-        // continue execution (process keeps using CPU)
-
-
+        // temporarily leave waiting process out of readyQueue
+        // it'll only return to readyQueue when it collects exit status from child
+        this->cpu.RemoveCurrentProcessFromCPU();
+    }
 }
 
 int SimOS::GetParentPID(int pid){

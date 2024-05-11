@@ -41,7 +41,7 @@ class CPUManager{
         }
 
         // similar to CPUTimerInterrupt except that we don't move process to readyQueue
-        // this is used for DiskReadRequest() and termination
+        // this is used for DiskReadRequest(), Exit() and Wait()
         void RemoveCurrentProcessFromCPU(){
             CPU_Idle_ErrorCheck(); // check if CPU idle
 
