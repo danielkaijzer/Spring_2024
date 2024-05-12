@@ -1,13 +1,6 @@
 #include "SimOS.h"
 
-SimOS::SimOS(int numberOfDisks, unsigned long long amountOfRAM, unsigned int pageSize){
-    // init disk manager to have specified num of disks
-    this->disks = DiskManager(numberOfDisks);
-
-    // init MemoryManager to have specified amount of RAM and pages
-    this->ram = MemoryManager(amountOfRAM,pageSize);
-
-}
+SimOS::SimOS(int numberOfDisks, unsigned long long amountOfRAM, unsigned int pageSize) : disks(numberOfDisks), ram(amountOfRAM,pageSize){}
 
 void SimOS::NewProcess(){
     PID_counter++;
@@ -39,6 +32,9 @@ void SimOS::TimerInterrupt(){
 
 void SimOS::DiskReadRequest( int diskNumber, std::string fileName ){
 
+    // check if CPU is idle
+    this->cpu.CPU_Idle_ErrorCheck();
+
     // current process using CPU requests to read file from Disk diskNumber
     this->disks.ReadFromDisk(this->cpu.GetProcessUsingCPU(),diskNumber,fileName);
 
@@ -53,13 +49,13 @@ void SimOS::DiskReadRequest( int diskNumber, std::string fileName ){
 void SimOS::DiskJobCompleted( int diskNumber ){
     int servedProcessPID = this->GetDisk(diskNumber).PID;
 
-    // "Complete" job by dequeing from front of IO queue
-    disks.dequeFrontIOQueue(diskNumber);
+    // Remove FileReadRequest obj associated with process from disk
+    disks.RemoveProcessFromDisks(servedProcessPID,diskNumber);
 
     // update disk tracking for process that has been served
     processes[servedProcessPID].disk = -1; // process no longer using disk
 
-    // move served process back to readyQueue
+    // move served process back to readyQueue, or CPU if CPU is idle
     this->cpu.AddToReadyQueue(servedProcessPID);
 
 }
@@ -81,8 +77,10 @@ std::deque<int> SimOS::GetReadyQueue(){
 }
 
 MemoryUsage SimOS::GetMemory(){
-    this->ram.GetMemory();
+    return this->ram.GetMemory();
 }
+
+
 
 FileReadRequest SimOS::GetDisk(int diskNumber){
     return this->disks.GetDisk(diskNumber);
@@ -102,6 +100,7 @@ void SimOS::SimExit(){
 
     // Check if parent of current process has called wait()
     if (parent_waiting){
+
         // terminate process immediately
         TerminateProcess(this->cpu.GetProcessUsingCPU());
         // change parent waiting state to false
@@ -120,7 +119,7 @@ void SimOS::SimExit(){
 // TO DO
 void SimOS::SimWait(){
 
-    cpu.CPU_Idle_ErrorCheck(); // check if CPU idle, throw error if so
+    this->cpu.CPU_Idle_ErrorCheck(); // check if CPU idle, throw error if so
 
     // loop through children and check if any of them are zombies
 
@@ -174,6 +173,9 @@ void SimOS::TerminateProcess(int pid){
     // Remove this process from readyQueue
     this->cpu.RemoveProcessFromReadyQueue(pid);
 
+    // Remove this process from Disks
+    this->disks.RemoveProcessFromDisks(pid, processes[pid].disk);
+
     // Remove this process from diskQueue
     this->disks.RemoveProcessFromIOQueues(pid, processes[pid].disk);
 
@@ -198,9 +200,12 @@ void SimOS::MakeZombie(Process& p){
     // Remove this process from readyQueue
     this->cpu.RemoveProcessFromReadyQueue(p.pid_);
 
+    // Remove this process from Disks
+    this->disks.RemoveProcessFromDisks(p.pid_, processes[p.pid_].disk);
+
     // Remove this process from diskQueue
-    this->disks.RemoveProcessFromIOQueues(p.pid_, processes[p.pid_].disk);
+    this->disks.RemoveProcessFromIOQueues(p.pid_, processes[p.pid_].disk); // THIS LINE
 
     // keep process in process table but mark as a zombie
-    p.zombie == true;
+    p.zombie = true;
 }

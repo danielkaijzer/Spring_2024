@@ -19,9 +19,10 @@ class CPUManager{
          * default cpu to equal 0 (meaning it is idle)
          * 
          */
-        CPUManager(){
-            process_using_cpu = NO_PROCESS;
-        }
+        CPUManager() : process_using_cpu(NO_PROCESS){}
+        // CPUManager(){
+        //     process_using_cpu = NO_PROCESS;
+        // }
     
 
         /**
@@ -107,10 +108,8 @@ class CPUManager{
         /**
          * @brief Check if CPU is idle, if it is throw exception
          * 
-         * @return true 
-         * @return false 
          */
-        bool CPU_Idle_ErrorCheck(){
+        void CPU_Idle_ErrorCheck(){
             if(process_using_cpu == NO_PROCESS){
                 throw std::logic_error("CPU is idle");
             }

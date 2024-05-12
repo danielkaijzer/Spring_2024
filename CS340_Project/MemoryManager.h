@@ -29,10 +29,12 @@ class MemoryManager{
     public:
         MemoryManager() = default;
 
-        MemoryManager(unsigned long long amountOfRAM, unsigned int pageSize){
-            this->pageSize_ = pageSize;
-            this->totalFrames_ = amountOfRAM/pageSize;
-        }
+        MemoryManager(unsigned long long amountOfRAM, unsigned int pageSize) : pageSize_(pageSize), totalFrames_(amountOfRAM/pageSize){}
+        
+        // {
+        //     this->pageSize_ = pageSize;
+        //     this->totalFrames_ = amountOfRAM/pageSize;
+        // }
 
         // void AccessMemoryAddressMM(unsigned long long address){}
 

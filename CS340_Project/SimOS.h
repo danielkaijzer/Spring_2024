@@ -25,12 +25,15 @@
 struct Process{
     unsigned int pid_{0};
     std::vector<unsigned int> children;
-    int disk{-1}; // initialize disk to -1 since process isn't using a disk 
+    int disk{-1}; // the disk process is using, initialize disk to -1 since process isn't using a disk at init
 
     int parent_pid{0};
 
     bool waiting{false}; // process is waiting to collect exit status of child
     bool zombie{false}; // parent hasn't called wait yet
+
+    // default constructor
+    Process() : pid_(0) {};
 
     // parameterized constructor
     Process(unsigned int pid) : pid_(pid) {}
