@@ -1,9 +1,7 @@
 /**
  * @file SimOS.h
  * @author Daniel Kaijzer
- * @brief Interface file for SimOS class
- * @version 0.1
- * @date 2024-04-07
+ * @date 2024-05-13
  * 
  * @copyright Copyright (c) 2024
  * 
@@ -12,10 +10,7 @@
 #ifndef _SIMOS_H
 #define _SIMOS_H
 
-#include <iostream>
-#include <vector>
-#include <deque>
-#include <algorithm>
+// #include <iostream>
 #include <unordered_map>
 #include "CPUManager.h"
 #include "DiskManager.h"

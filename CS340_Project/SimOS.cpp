@@ -124,7 +124,6 @@ void SimOS::SimExit(){
     this->cpu.RemoveCurrentProcessFromCPU();
 }
 
-// TO DO
 void SimOS::SimWait(){
 
     this->cpu.CPU_Idle_ErrorCheck(); // check if CPU idle, throw error if so

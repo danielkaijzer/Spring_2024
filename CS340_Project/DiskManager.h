@@ -1,8 +1,18 @@
+/**
+ * @file DiskManager.h
+ * @author Daniel Kaijzer
+ * @date 2024-05-13
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
+
 #ifndef _DISKMANAGER_H
 #define _DISKMANAGER_H
 
-#include <iosfwd> // SimOS will include <iostream>
-//#include <queue> // used for I/O-queue which is FIFO
+#include <iostream> 
+#include <deque> // used for I/O-queue which is FIFO
+#include <vector>
 
 struct FileReadRequest
 {
@@ -32,7 +42,7 @@ class DiskManager{
     public:
         DiskManager() = default;
 
-        DiskManager(int numberOfDisks) : numberOfDisks_(numberOfDisks), ioQueues_(numberOfDisks), disks_(numberOfDisks) {}
+        DiskManager(int numberOfDisks);
 
         /**
          * @brief read from disk
@@ -44,34 +54,10 @@ class DiskManager{
          * @param diskNumber 
          * @param fileName 
          */
-        void ReadFromDisk( int current_process_PID, int diskNumber, std::string fileName){
-            IfDiskExists(diskNumber); // check if disk exists
-
-            FileReadRequest f; 
-            f.PID = current_process_PID;
-            f.fileName = fileName;
-
-            // check if disk is idle
-            if (disks_[diskNumber].diskIdle){
-                // if disk idle, then start file read request at disk
-                disks_[diskNumber].usingDisk = f;
-                disks_[diskNumber].diskIdle = false;
-            }
-            else // if disk is in use add process to I/O queue
-            { 
-                ioQueues_[diskNumber].push_back(f);
-            }
-        }
+        void ReadFromDisk( int current_process_PID, int diskNumber, std::string fileName);
 
 
-        void dequeFrontIOQueue( int diskNumber ){
-            if (!ioQueues_[diskNumber].empty()){
-                ioQueues_[diskNumber].pop_front();
-            }
-            else{ // if IO queue is empty, there's no job to complete
-                throw std::logic_error("ioQueue empty.");
-            }
-        }
+        void dequeFrontIOQueue( int diskNumber );
 
         /**
          * @brief Delete process from ioQueue
@@ -80,47 +66,14 @@ class DiskManager{
          * @param pid 
          * @param diskNumber 
          */
-        void RemoveProcessFromIOQueues(int pid, int diskNumber){
-            if (diskNumber == -1){
-                return; // if invalid disk number, you don't need to look
-            }
-
-            // search disk for process using FileReadRequest
-            // iterate through ioQueue of specified disk and remove process if found
-            for (auto itr = ioQueues_[diskNumber].begin(); itr != ioQueues_[diskNumber].end();){
-                if (itr->PID == pid){ // if process found in ioQueue
-                    ioQueues_[diskNumber].erase(itr); // erase FileReadRequest obj associated with process from ioQueue
-
-                    return; // no need to keep looking
-                }
-                else{ // if process not yet found, continue searching
-                    ++itr;
-                }
-            }
-        }
+        void RemoveProcessFromIOQueues(int pid, int diskNumber);
 
 
         /**
          * @brief removes using a Disk
          * used for Exit() for terminating processes via cascading termination
          */
-        void RemoveProcessFromDisks(int pid, int diskNumber){
-
-            // if Disk idle throw exception
-            if (disks_[diskNumber].diskIdle){
-                throw std::logic_error("Disk is not in use.");
-            }
-
-            // if process is indeed using this disk, remove it
-            if (disks_[diskNumber].usingDisk.PID == pid){
-                // default FileReadRequest obj 
-                FileReadRequest emptyf;
-
-                // else remove FileReadRequest obj associated with processfrom ioQueue
-                disks_[diskNumber].usingDisk = emptyf;
-                disks_[diskNumber].diskIdle = true;
-            }
-        }
+        void RemoveProcessFromDisks(int pid, int diskNumber);
 
         /**
          * @brief Using specified disk, return disk object using 
@@ -128,32 +81,16 @@ class DiskManager{
          * @param diskNumber 
          * @return FileReadRequest object using disk
          */
-        FileReadRequest GetDisk(int diskNumber){
-            IfDiskExists(diskNumber);
+        FileReadRequest GetDisk(int diskNumber);
 
-            if (disks_[diskNumber].diskIdle){
-                return FileReadRequest();
-            }
-            else // if disks isn't idle
-            {
-                return disks_[diskNumber].usingDisk;
-            }
-        }
-
-        std::deque<FileReadRequest> GetDiskQueue( int diskNumber ){
-            return ioQueues_[diskNumber];
-        }
+        std::deque<FileReadRequest> GetDiskQueue( int diskNumber );
 
         /**
          * @brief Check if disk exists
          * 
          * @param diskNumber 
          */
-        void IfDiskExists(int diskNumber){
-            if (diskNumber > numberOfDisks_){
-                throw std::out_of_range("Specified disk doesn't exist");
-            }
-        }
+        void IfDiskExists(int diskNumber);
 };
 
 #endif

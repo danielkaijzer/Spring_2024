@@ -1,5 +1,5 @@
 #include"SimOS.h"
-// #include<deque>
+#include<deque>
 
 int main()
 {
