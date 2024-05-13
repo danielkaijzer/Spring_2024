@@ -27,7 +27,7 @@ struct Process{
     std::vector<unsigned int> children;
     int disk{-1}; // the disk process is using, initialize disk to -1 since process isn't using a disk at init
 
-    int parent_pid{0};
+    int parent_pid{-1}; // init parent_pid to -1, means process does not have a parent
 
     bool waiting{false}; // process is waiting to collect exit status of child
     bool zombie{false}; // parent hasn't called wait yet

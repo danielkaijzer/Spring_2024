@@ -80,8 +80,6 @@ MemoryUsage SimOS::GetMemory(){
     return this->ram.GetMemory();
 }
 
-
-
 FileReadRequest SimOS::GetDisk(int diskNumber){
     return this->disks.GetDisk(diskNumber);
 }
@@ -92,17 +90,27 @@ std::deque<FileReadRequest> SimOS::GetDiskQueue( int diskNumber ){
 
 
 void SimOS::SimExit(){
+
     this->cpu.CPU_Idle_ErrorCheck(); // if CPU idle throw error
 
+
     int process_to_exit_PID = this->cpu.GetProcessUsingCPU();
-    bool parent_waiting = processes.at(GetParentPID(process_to_exit_PID)).waiting;
+
+    bool parent_waiting = false;
+
+    // check if process has a waiting parent
+    if (processes[process_to_exit_PID].parent_pid >= 0) // if process has parent
+    {
+        // check if parent is waiting
+        parent_waiting = processes.at(GetParentPID(process_to_exit_PID)).waiting;
+    }
 
 
-    // Check if parent of current process has called wait()
+    // if parent is waiting
     if (parent_waiting){
-
         // terminate process immediately
         TerminateProcess(this->cpu.GetProcessUsingCPU());
+
         // change parent waiting state to false
         processes.at(GetParentPID(process_to_exit_PID)).waiting = false;
     }

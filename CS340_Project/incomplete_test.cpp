@@ -126,31 +126,48 @@ int main()
 		<< std::endl;
 	}
 
-// 	sim.AccessMemoryAddress(140);
-// 	MemoryUsage ram{ sim.GetMemory() };
-// 	if (ram[0].pageNumber != 14 || ram[0].PID != 1)
-// 	{
-// 		allTestsClean = false;
-// 		std::cout << "Test on the line 90 fails!" << std::endl;
-// 	}
+	sim.AccessMemoryAddress(140);
+	MemoryUsage ram{ sim.GetMemory() };
+	if (ram[0].pageNumber != 14 || ram[0].PID != 1)
+	{
+		allTestsClean = false;
+		std::cout << "Test on the line 90 fails!" << std::endl;
+	}
+	else{
+		std::cout << "Process 1 requests to access memory address 140." 
+		<< std::endl;
+	}
 
-// 	sim.SimWait();
-// 	if (sim.GetCPU() != 1)
-// 	{
-// 		allTestsClean = false;
-// 		std::cout << "Test on the line 97 fails!" << std::endl;
-// 	}
+	sim.SimWait();
+	if (sim.GetCPU() != 1)
+	{
+		allTestsClean = false;
+		std::cout << "Test on the line 97 fails!" << std::endl;
+	}
+	else{
+		std::cout << "Process 1 waits for child" 
+		<< std::endl;
+	}
 
-// 	sim.SimExit();
-// 	ram = sim.GetMemory();
-// 	if (sim.GetCPU() != NO_PROCESS || ram.size() != 0)
-// 	{
-// 		allTestsClean = false;
-// 		std::cout << "Test on the line 105 fails!" << std::endl;
-// 	}
+	std::cout << "Test1." << std::endl;
 
-// 	if (allTestsClean)
-// 		std::cout << "These preliminary tests are passed" << std::endl;
+	// needs work
+	sim.SimExit(); // breaks code
+	ram = sim.GetMemory();
+
+
+	if (sim.GetCPU() != NO_PROCESS || ram.size() != 0)
+	{
+		allTestsClean = false;
+		std::cout << "Test on the line 105 fails!" << std::endl;
+	}
+	else{
+		std::cout << "Process 1 exits. Memory is cleaned." 
+		<< std::endl;
+	}
+
+	if (allTestsClean)
+		std::cout << "These preliminary tests are passed" << std::endl;
 
 	return 0;
 }
