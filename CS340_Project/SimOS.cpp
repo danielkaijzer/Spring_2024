@@ -93,7 +93,6 @@ void SimOS::SimExit(){
 
     this->cpu.CPU_Idle_ErrorCheck(); // if CPU idle throw error
 
-
     int process_to_exit_PID = this->cpu.GetProcessUsingCPU();
 
     bool parent_waiting = false;
@@ -166,7 +165,7 @@ int SimOS::GetParentPID(int pid){
        
 void SimOS::TerminateProcess(int pid){
 
-        // check if process has children
+    // check if process has children
     if (!processes[pid].children.empty()){
         // terminate children recursively
         for (int childPID : processes[pid].children){
@@ -186,7 +185,7 @@ void SimOS::TerminateProcess(int pid){
     // Remove this process from diskQueue
     this->disks.RemoveProcessFromIOQueues(pid, processes[pid].disk);
 
-    // remove pthis rocess from vector of processes
+    // remove this process from vector of processes
     processes.erase(pid);
 }
 

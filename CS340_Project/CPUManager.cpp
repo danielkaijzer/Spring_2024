@@ -9,8 +9,6 @@
 
 #include "CPUManager.h"
 
-CPUManager::CPUManager() : process_using_cpu(NO_PROCESS){}
-
 void CPUManager::AddToReadyQueue(int pid){
     if(process_using_cpu != NO_PROCESS){
         readyQueue.push_back(pid);

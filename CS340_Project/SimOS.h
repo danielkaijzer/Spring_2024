@@ -10,7 +10,7 @@
 #ifndef _SIMOS_H
 #define _SIMOS_H
 
-// #include <iostream>
+#include <iostream>
 #include <unordered_map>
 #include "CPUManager.h"
 #include "DiskManager.h"
@@ -55,12 +55,13 @@ class SimOS {
         /**
          * @brief Terminates process
          * implements cascading termination
+         * kills process in argument and children
          * @param pid 
          */
         void TerminateProcess(int pid);
 
         /**
-         * @brief kills children
+         * @brief kills children only (not parent)
          * 
          * @param pid 
          */
@@ -75,6 +76,14 @@ class SimOS {
         void MakeZombie(Process& p);
 
     public:
+
+
+        /**
+         * @brief default constructor
+         * Construct a new SimOS object
+         */
+        SimOS() = default;
+
         /**
          * @brief Construct a new Sim OS object
          * 

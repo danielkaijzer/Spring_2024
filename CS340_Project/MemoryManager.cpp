@@ -77,15 +77,7 @@ void MemoryManager::HandlePageFault(unsigned long long pageNumber, int pid) {
 
 void MemoryManager::RemoveProcessFromMemory(int pid){
     // Remove all frames associated with the process PID
-    for (auto itr = memory.begin(); itr != memory.end();) {
-        if (itr->PID == pid) {
-            // Erase and get the new iterator pointing to the next element
-            itr = memory.erase(itr);
-        } 
-        else
-        {
-            // Only increment the iterator if no erasure happens
-            ++itr;
-        }
-    }
+    memory.erase(std::remove_if(memory.begin(), memory.end(), 
+    [pid](const MemoryItem& item) {return item.PID == pid;}),
+    memory.end());
 }

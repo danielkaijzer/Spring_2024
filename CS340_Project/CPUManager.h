@@ -28,7 +28,7 @@ class CPUManager{
          * default cpu to equal 0 (meaning it is idle)
          * 
          */
-        CPUManager();
+        CPUManager() = default;
     
 
         /**

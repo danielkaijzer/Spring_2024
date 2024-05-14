@@ -91,12 +91,14 @@ FileReadRequest DiskManager::GetDisk(int diskNumber){
 }
 
 std::deque<FileReadRequest> DiskManager::GetDiskQueue( int diskNumber ){
+    IfDiskExists(diskNumber);
+
     return ioQueues_[diskNumber];
 }
 
 
 void DiskManager::IfDiskExists(int diskNumber){
-    if (diskNumber > numberOfDisks_){
+    if (diskNumber > numberOfDisks_ || diskNumber < 0){
         throw std::out_of_range("Specified disk doesn't exist");
     }
 }
