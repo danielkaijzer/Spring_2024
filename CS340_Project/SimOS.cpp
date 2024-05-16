@@ -180,8 +180,9 @@ void SimOS::TerminateProcess(int pid){
     this->cpu.RemoveProcessFromReadyQueue(pid);
 
     // Remove this process from Disks
-    this->disks.RemoveProcessFromDisks(pid, processes[pid].disk);
-
+    if (processes[pid].disk != -1){
+        this->disks.RemoveProcessFromDisks(pid, processes[pid].disk);
+    }
     // Remove this process from diskQueue
     this->disks.RemoveProcessFromIOQueues(pid, processes[pid].disk);
 
@@ -207,10 +208,12 @@ void SimOS::MakeZombie(Process& p){
     this->cpu.RemoveProcessFromReadyQueue(p.pid_);
 
     // Remove this process from Disks
-    this->disks.RemoveProcessFromDisks(p.pid_, processes[p.pid_].disk);
+    if (p.disk != -1){
+        this->disks.RemoveProcessFromDisks(p.pid_, processes[p.pid_].disk);
+    }
 
     // Remove this process from diskQueue
-    this->disks.RemoveProcessFromIOQueues(p.pid_, processes[p.pid_].disk); // THIS LINE
+    this->disks.RemoveProcessFromIOQueues(p.pid_, processes[p.pid_].disk);
 
     // keep process in process table but mark as a zombie
     p.zombie = true;

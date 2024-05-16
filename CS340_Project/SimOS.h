@@ -93,7 +93,7 @@ class SimOS {
          * @param amountOfRAM_ specifies amount of memory
          * @param pageSize_ specifies page size
          */
-        SimOS(int numberOfDisks, unsigned long long amountOfRAM, unsigned int pageSize);
+        SimOS( int numberOfDisks, unsigned long long amountOfRAM, unsigned int pageSize);
 
         
 
