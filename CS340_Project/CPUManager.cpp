@@ -46,7 +46,7 @@ int CPUManager::GetProcessUsingCPU(){
     return process_using_cpu;
 }
 
-std::deque<int> CPUManager::GetReadyQueueFromCPUManager(){
+std::deque<int>& CPUManager::GetReadyQueueFromCPUManager(){
     return readyQueue;
 }
 

@@ -43,7 +43,12 @@ class MemoryManager{
 
         MemoryManager(unsigned long long amountOfRAM, unsigned int pageSize);
         
-        MemoryUsage GetMemory();
+        /**
+         * @brief Returns a memory
+         * 
+         * @return MemoryUsage 
+         */
+        MemoryUsage& GetMemory();
 
         /**
          * @brief Currently running process wants to access the specified logical memory address. 
@@ -53,7 +58,12 @@ class MemoryManager{
          */
         void AccessMemoryAddress(unsigned long long address, int process_using_cpu);
 
-
+        /**
+         * @brief moves most recently used frame 
+         * to the front of memory (vector of MemoryItems)
+         * 
+         * @param frame 
+         */
         void UpdateRecentlyUsed(MemoryItem& frame);
 
 

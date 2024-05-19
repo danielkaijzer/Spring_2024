@@ -90,7 +90,7 @@ FileReadRequest DiskManager::GetDisk(int diskNumber){
     }
 }
 
-std::deque<FileReadRequest> DiskManager::GetDiskQueue( int diskNumber ){
+std::deque<FileReadRequest>& DiskManager::GetDiskQueue( int diskNumber ){
     IfDiskExists(diskNumber);
 
     return ioQueues_[diskNumber];

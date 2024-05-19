@@ -63,13 +63,25 @@ class CPUManager{
          */
         int GetProcessUsingCPU();
 
-        std::deque<int> GetReadyQueueFromCPUManager();
+        /**
+         * @brief simply returns the readyQueue
+         * 
+         * @return std::deque<int> 
+         */
+        std::deque<int>& GetReadyQueueFromCPUManager();
 
+
+        /**
+         * @brief removes a process from the readyQueue
+         * used for process termination 
+         * 
+         * @param pid 
+         */
         void RemoveProcessFromReadyQueue(int pid);
 
 
         /**
-         * @brief Check if CPU is idle, if it is throw exception
+         * @brief Check if CPU is idle. If it is, throw exception
          * 
          */
         void CPU_Idle_ErrorCheck();

@@ -11,7 +11,7 @@
 
 MemoryManager::MemoryManager(unsigned long long amountOfRAM, unsigned int pageSize) : pageSize_(pageSize), totalFrames_(amountOfRAM/pageSize) {}
 
-MemoryUsage MemoryManager::GetMemory(){
+MemoryUsage& MemoryManager::GetMemory(){
     return memory;
 }
 

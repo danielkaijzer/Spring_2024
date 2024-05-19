@@ -76,14 +76,26 @@ class DiskManager{
         void RemoveProcessFromDisks(int pid, int diskNumber);
 
         /**
-         * @brief Using specified disk, return disk object using 
+         * @brief Using specified disk, returns an object with PID of the process served by 
+         * specified disk and the name of the file read for that process.
+         * 
+         * If the disk is idle, GetDisk returns the default FileReadRequest object
+         * (with PID 0 and the empty string in fileName)
+         * 
+         * If a disk with the requested number doesn’t exist throw std::out_of_range exception.
          * 
          * @param diskNumber 
          * @return FileReadRequest object using disk
          */
         FileReadRequest GetDisk(int diskNumber);
 
-        std::deque<FileReadRequest> GetDiskQueue( int diskNumber );
+        /**
+         * @brief Get the Disk Queue object
+         * 
+         * @param diskNumber 
+         * @return std::deque<FileReadRequest>& 
+         */
+        std::deque<FileReadRequest>& GetDiskQueue( int diskNumber );
 
         /**
          * @brief Check if disk exists

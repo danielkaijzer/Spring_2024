@@ -239,6 +239,8 @@ class SimOS {
          * 
          * If a disk with the requested number doesn’t exist throw std::out_of_range exception.
          * 
+         * Mostly implemented in DiskManager class
+         * 
          * @param diskNumber 
          * @return FileReadRequest (with PID and file name)
          */
