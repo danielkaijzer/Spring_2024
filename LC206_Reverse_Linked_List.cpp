@@ -21,20 +21,18 @@ public:
         ListNode* cur = head;
         ListNode* prev = nullptr;
 
-        while(cur != nullptr){ // until you reach tail
-            ListNode* next = cur->next; // track next node 
+        while(cur){
+            ListNode* tmp = cur->next; // track current next node before we swap links for current node
 
-            // reverse the links (swap left and right pointers)
-            cur->next = prev; // the right/next pointer will now point to left/prev node
-
-            // move to the next node in list, to prepare to swap links there
+            // swap left and right links for cur node
+            cur->next =  prev;
             prev = cur; 
-            cur = next;
+            cur = tmp;
         }
 
-        // return the last node in chain (which is now the new first node in reversed list)
+        // return last node in list (which is now the new start of list)
+        // it's prev because at the end of the loop above cur becomes nullptr
         return prev;
-
     }
 
     void Print(ListNode* tmp){
