@@ -21,13 +21,18 @@ public:
         ListNode* cur = head;
         ListNode* prev = nullptr;
 
-        while (cur){
-            ListNode* next = cur->next;
-            next->next = prev;
-            prev = cur;
+        while(cur != nullptr){ // until you reach tail
+            ListNode* next = cur->next; // track next node 
+
+            // reverse the links (swap left and right pointers)
+            cur->next = prev; // the right/next pointer will now point to left/prev node
+
+            // move to the next node in list, to prepare to swap links there
+            prev = cur; 
             cur = next;
         }
 
+        // return the last node in chain (which is now the new first node in reversed list)
         return prev;
 
     }
@@ -62,32 +67,3 @@ int main(){
     s.Print(L3);
 
 }
-
-/*
-
-
-        ListNode* cur = head;
-        ListNode* prev = nullptr;
-
-        while(cur){
-            ListNode* tmp = cur->next;
-            cur->next = prev;
-            prev = cur;
-            cur = tmp;
-        }
-        return prev;
-
-
-        ListNode* prev = nullptr;
-        ListNode* cur = head;
-
-        while(cur){
-            ListNode* tmp = cur->next;
-            cur->next = prev;
-            prev = cur;
-            cur = tmp;
-        }
-
-        return prev;
-
-*/
