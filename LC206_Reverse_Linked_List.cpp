@@ -21,13 +21,15 @@ public:
         ListNode* cur = head;
         ListNode* prev = nullptr;
 
-        while(cur){
-            ListNode* tmp = cur->next;
-            cur->next = prev;
+        while (cur){
+            ListNode* next = cur->next;
+            next->next = prev;
             prev = cur;
-            cur = tmp;
+            cur = next;
         }
+
         return prev;
+
     }
 
     void Print(ListNode* tmp){
@@ -62,6 +64,19 @@ int main(){
 }
 
 /*
+
+
+        ListNode* cur = head;
+        ListNode* prev = nullptr;
+
+        while(cur){
+            ListNode* tmp = cur->next;
+            cur->next = prev;
+            prev = cur;
+            cur = tmp;
+        }
+        return prev;
+
 
         ListNode* prev = nullptr;
         ListNode* cur = head;

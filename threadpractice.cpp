@@ -7,13 +7,13 @@ int glob{0}; // global variable
 std::mutex for_glob;
 
 void increment(){
-    // for_glob.lock();
+    for_glob.lock();
     for (int i =0;i < 20000;i++){
         for_glob.lock();
         glob++; // modify shared resource (critical section)
         for_glob.unlock();
     }
-    // for_glob.unlock();
+    for_glob.unlock();
 }
 
 int main(){
